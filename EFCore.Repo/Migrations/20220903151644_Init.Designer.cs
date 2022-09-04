@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace EFCore.WebAPI.Migrations
+namespace EFCore.Repo.Migrations
 {
     [DbContext(typeof(HeroiContexto))]
-    [Migration("20220902202835_HeroisBatalhas_Identidade")]
-    partial class HeroisBatalhas_Identidade
+    [Migration("20220903151644_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace EFCore.WebAPI.Migrations
                 .HasAnnotation("ProductVersion", "5.0.17")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("EFCore.WebAPI.Models.Arma", b =>
+            modelBuilder.Entity("EFCore.Domain.Arma", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -41,7 +41,7 @@ namespace EFCore.WebAPI.Migrations
                     b.ToTable("Armas");
                 });
 
-            modelBuilder.Entity("EFCore.WebAPI.Models.Batalha", b =>
+            modelBuilder.Entity("EFCore.Domain.Batalha", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -65,7 +65,7 @@ namespace EFCore.WebAPI.Migrations
                     b.ToTable("Batalhas");
                 });
 
-            modelBuilder.Entity("EFCore.WebAPI.Models.Heroi", b =>
+            modelBuilder.Entity("EFCore.Domain.Heroi", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -80,7 +80,7 @@ namespace EFCore.WebAPI.Migrations
                     b.ToTable("Herois");
                 });
 
-            modelBuilder.Entity("EFCore.WebAPI.Models.HeroiBatalha", b =>
+            modelBuilder.Entity("EFCore.Domain.HeroiBatalha", b =>
                 {
                     b.Property<int>("BatalhaId")
                         .HasColumnType("int");
@@ -95,7 +95,7 @@ namespace EFCore.WebAPI.Migrations
                     b.ToTable("HeroisBatalhas");
                 });
 
-            modelBuilder.Entity("EFCore.WebAPI.Models.IdentidadeSecreta", b =>
+            modelBuilder.Entity("EFCore.Domain.IdentidadeSecreta", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -116,9 +116,9 @@ namespace EFCore.WebAPI.Migrations
                     b.ToTable("IdentidadeSecretas");
                 });
 
-            modelBuilder.Entity("EFCore.WebAPI.Models.Arma", b =>
+            modelBuilder.Entity("EFCore.Domain.Arma", b =>
                 {
-                    b.HasOne("EFCore.WebAPI.Models.Heroi", "Heroi")
+                    b.HasOne("EFCore.Domain.Heroi", "Heroi")
                         .WithMany("Armas")
                         .HasForeignKey("HeroiId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -127,15 +127,15 @@ namespace EFCore.WebAPI.Migrations
                     b.Navigation("Heroi");
                 });
 
-            modelBuilder.Entity("EFCore.WebAPI.Models.HeroiBatalha", b =>
+            modelBuilder.Entity("EFCore.Domain.HeroiBatalha", b =>
                 {
-                    b.HasOne("EFCore.WebAPI.Models.Batalha", "Batalha")
+                    b.HasOne("EFCore.Domain.Batalha", "Batalha")
                         .WithMany("HeroisBatalhas")
                         .HasForeignKey("BatalhaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EFCore.WebAPI.Models.Heroi", "Heroi")
+                    b.HasOne("EFCore.Domain.Heroi", "Heroi")
                         .WithMany("HeroisBatalhas")
                         .HasForeignKey("HeroiId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -146,23 +146,23 @@ namespace EFCore.WebAPI.Migrations
                     b.Navigation("Heroi");
                 });
 
-            modelBuilder.Entity("EFCore.WebAPI.Models.IdentidadeSecreta", b =>
+            modelBuilder.Entity("EFCore.Domain.IdentidadeSecreta", b =>
                 {
-                    b.HasOne("EFCore.WebAPI.Models.Heroi", "Heroi")
+                    b.HasOne("EFCore.Domain.Heroi", "Heroi")
                         .WithOne("Identidade")
-                        .HasForeignKey("EFCore.WebAPI.Models.IdentidadeSecreta", "HeroiId")
+                        .HasForeignKey("EFCore.Domain.IdentidadeSecreta", "HeroiId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Heroi");
                 });
 
-            modelBuilder.Entity("EFCore.WebAPI.Models.Batalha", b =>
+            modelBuilder.Entity("EFCore.Domain.Batalha", b =>
                 {
                     b.Navigation("HeroisBatalhas");
                 });
 
-            modelBuilder.Entity("EFCore.WebAPI.Models.Heroi", b =>
+            modelBuilder.Entity("EFCore.Domain.Heroi", b =>
                 {
                     b.Navigation("Armas");
 
