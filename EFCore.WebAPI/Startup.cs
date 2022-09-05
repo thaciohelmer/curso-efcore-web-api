@@ -1,6 +1,7 @@
 using EFCore.Repo;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +27,8 @@ namespace EFCore.WebAPI
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            services.AddMvc().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services.AddScoped<IEFCoreRepository, EFCoreRepository>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

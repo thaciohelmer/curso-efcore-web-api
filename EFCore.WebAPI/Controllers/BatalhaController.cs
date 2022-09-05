@@ -3,7 +3,6 @@ using EFCore.Repo;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,21 +14,20 @@ namespace EFCore.WebAPI.Controllers
     [ApiController]
     public class BatalhaController : ControllerBase
     {
+        private readonly IEFCoreRepository _repo;
 
-        private readonly HeroiContexto _context;
-
-        public BatalhaController(HeroiContexto context)
+        public BatalhaController(IEFCoreRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
-        // GET: api/<BatalhaController>
         [HttpGet]
-        public ActionResult Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
-                return Ok(_context.Batalhas.ToList());
+                var batalha = await _repo.GetAllBatalhas(true);
+                return Ok(batalha);
             }
             catch (Exception ex)
             {
@@ -37,23 +35,15 @@ namespace EFCore.WebAPI.Controllers
             }
         }
 
-        // GET api/<BatalhaController>/5
         [HttpGet("{id}", Name = "GetBatalha")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<BatalhaController>
-        [HttpPost]
-        public ActionResult Post(Batalha model)
+        public async Task<IActionResult> Get(int id)
         {
             try
             {
-                _context.Batalhas.Add(model);
-                _context.SaveChanges();
+                var batalha = await _repo.GetBatalhaById(id, true);
 
-                return Ok($"A batalha {model.Nome} foi criada com sucesso !");
+                if (batalha != null) return Ok(batalha);
+                else return Ok("Batalha não encontrado !");
             }
             catch (Exception ex)
             {
@@ -61,21 +51,40 @@ namespace EFCore.WebAPI.Controllers
             }
         }
 
-        // PUT api/<BatalhaController>/5
-        [HttpPut("{id}")]
-        public ActionResult Put(int id, Batalha model)
+        [HttpPost]
+        public async Task<IActionResult> Post(Batalha model)
         {
             try
             {
-                if (_context.Batalhas.AsNoTracking().FirstOrDefault(b => b.Id == id) != null)
+                _repo.Add(model);
+
+                if (await _repo.SaveChangeAsync())
                 {
-                    _context.Update(model);
-                    _context.SaveChanges();
+                    return Ok($"A batalha {model.Nome} foi criada com sucesso !");
                 }
 
-                return Ok($"A batalha {model.Nome} foi atualizada com sucesso !");
+                return BadRequest($"Não foi possível salvar a batalha {model.Nome}.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
 
-            } catch (Exception ex)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, Batalha model)
+        {
+            try
+            {
+                var batalha = await _repo.GetBatalhaById(id);
+                if (batalha != null)
+                {
+                    _repo.Update(model);
+                    if (await _repo.SaveChangeAsync()) return Ok($"A batalha {model.Nome} foi alterada com sucesso !");
+                }
+                return Ok("Batalha não encontrada.");
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex);
             }
@@ -83,8 +92,23 @@ namespace EFCore.WebAPI.Controllers
 
         // DELETE api/<BatalhaController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            try
+            {
+                var batalha = await _repo.GetBatalhaById(id);
+                if (batalha != null)
+                {
+                    _repo.Delete(batalha);
+                    if (await _repo.SaveChangeAsync()) return Ok($"A batalha {batalha.Nome} foi excluida com sucesso !");
+                }
+                return Ok("Batalha não encontrada.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+
         }
     }
 }
