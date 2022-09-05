@@ -10,16 +10,16 @@ namespace EFCore.WebAPI.Controllers
     public class ValueController : ControllerBase
     {
 
-        public readonly HeroiContexto _contexto;
+        public readonly HeroiContexto _context;
         public ValueController(HeroiContexto contexto)
         {
-            _contexto = contexto;
+            _context = contexto;
         }
 
         [HttpGet("{getallheros}")]
         public ActionResult GetAllHeros()
         {
-            var HeroiList = _contexto.Herois.ToList();
+            var HeroiList = _context.Herois.ToList();
             return Ok(HeroiList);
         }
 
@@ -31,13 +31,13 @@ namespace EFCore.WebAPI.Controllers
             //Nome = nameHero
             //};
 
-            var heroi = _contexto.Herois
+            var heroi = _context.Herois
                             .Where(h => h.Id == 5)
                             .FirstOrDefault();
 
             heroi.Nome = "Homem Aranha";
-            //_contexto.Herois.Add(heroi);
-            _contexto.SaveChanges();
+            //_context.Herois.Add(heroi);
+            _context.SaveChanges();
 
             return Ok();
         }
@@ -45,7 +45,7 @@ namespace EFCore.WebAPI.Controllers
         [HttpGet("filtro/{nome}")]
         public ActionResult GetFiltro(string nome)
         {
-            var listHeroi = _contexto.Herois
+            var listHeroi = _context.Herois
                 .Where(h => h.Nome.Contains(nome))
                 .ToList();
 
@@ -56,7 +56,7 @@ namespace EFCore.WebAPI.Controllers
         public ActionResult GetAddRange()
         {
 
-            _contexto.AddRange(
+            _context.AddRange(
                 new Heroi { Nome = "Capitão America"},
                 new Heroi { Nome = "Doutor Estranho"},
                 new Heroi { Nome = "Pantera Negra"},
@@ -66,7 +66,7 @@ namespace EFCore.WebAPI.Controllers
                 new Heroi { Nome = "Capitã Marvel"}
                 );
 
-            _contexto.SaveChanges();
+            _context.SaveChanges();
 
             return Ok();
         }
@@ -74,12 +74,12 @@ namespace EFCore.WebAPI.Controllers
         [HttpGet("deletehero/{id}")]
         public void DeleteHero(int id)
         {
-            var heroi = _contexto.Herois
+            var heroi = _context.Herois
                  .Where(h => h.Id == id)
                  .Single();
 
-            _contexto.Herois.Remove(heroi);
-            _contexto.SaveChanges();
+            _context.Herois.Remove(heroi);
+            _context.SaveChanges();
         }
     }
 }
